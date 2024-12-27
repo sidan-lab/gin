@@ -1,0 +1,38 @@
+name: publish
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+" # Push events to matching *, i.e. 1.0, 20.15.10
+
+jobs:
+  publish:
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.11]
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install poetry
+        run: pipx install poetry
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "poetry"
+      - name: Install dependencies
+        run: |
+          poetry install
+      - name: Lint with flake8
+        run: |
+          poetry run flake8 sidan_gin
+      - name: Run unit tests
+        run: |
+          poetry run pytest --doctest-modules --ignore=examples --cov=sidan_gin --cov-config=.coveragerc --cov-report=xml
+      - name: poetry-check
+        run: |
+          poetry check
+      - name: poetry-publish
+        run: |
+          poetry publish --build --username __token__ --password ${{ secrets.PYPI_TOKEN }}
