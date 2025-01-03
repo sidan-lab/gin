@@ -1,4 +1,7 @@
-from pycardano import crypto, key, transaction
+from pycardano import crypto, key
+from cbor2 import dumps, loads
+from nacl.encoding import RawEncoder
+from nacl.hash import blake2b
 
 class HDWallet:
     def __init__(self, mnemonic):
@@ -8,8 +11,8 @@ class HDWallet:
         self.verification_key = self.signing_key.to_verification_key()
 
     def sign_tx(self, tx_hex):
-        tx = transaction.Transaction.from_cbor(tx_hex)
-        return self.sign(tx.transaction_body.id)
+        raw_decoded_cbor = loads(bytes.fromhex(tx_hex))
+        return self.sign(blake2b(dumps(raw_decoded_cbor[0]), 32, encoder=RawEncoder))
 
     def sign_message_hex(self, message_hex):
         return self.sign(bytes.fromhex(message_hex))
