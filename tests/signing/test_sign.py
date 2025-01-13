@@ -3,7 +3,7 @@ from sidan_gin import HDWallet
 
 class TestWalletSigning(unittest.TestCase):
 
-    def set_up(self):
+    def setUp(self):
         self.mnemonic = "summer summer summer summer summer summer summer summer summer summer summer summer summer summer summer summer summer summer summer summer summer summer summer summer"
         self.wallet = HDWallet(self.mnemonic)
 
