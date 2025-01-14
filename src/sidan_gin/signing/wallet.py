@@ -17,7 +17,7 @@ class HDWallet:
         raw_witness_set = raw_decoded_cbor[1]
         if (0 in raw_witness_set):
             raw_vkeys = raw_witness_set[0]
-            raw_vkeys.append([self.verification_key.to_non_extended().to_cbor(), signature])
+            raw_vkeys.append([self.verification_key.to_non_extended().to_cbor()[2::], signature])
             raw_witness_set[0] = raw_vkeys
         else:
             raw_witness_set[0] = [[self.verification_key.to_non_extended().to_cbor()[2::], signature]]
