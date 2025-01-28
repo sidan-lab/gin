@@ -17,8 +17,10 @@ authors = ["HinsonSIDAN <wongkahinhinson@gmail.com>"]
 license = "Apache-2.0"
 
 [tool.poetry.dependencies]
-python = ">3.11"  
+python = ">3.11,<4.0.0"  
 requests = "^2.25"
+cbor2 = "^5.6.5"
+pycardano = "^0.12.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^8.2.0"

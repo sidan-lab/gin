@@ -1,3 +1,4 @@
+# flake8: noqa: E501
 import unittest
 
 from sidan_gin import Asset, Assets  # Replace with the actual import path

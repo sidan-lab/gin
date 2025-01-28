@@ -1,3 +1,4 @@
+# flake8: noqa: E501
 import unittest
 
 from sidan_gin import Network  # Adjust the import path to match your project structure
