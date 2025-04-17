@@ -1,8 +1,8 @@
-name: publish
+name: test
 on:
   push:
-    tags:
-      - "v[0-9]+.[0-9]+.[0-9]+" # Push events to matching *, i.e. 1.0, 20.15.10
+    branches:
+      - ci/test
 
 jobs:
   publish:
@@ -43,6 +43,3 @@ jobs:
       - name: poetry-check
         run: |
           poetry check
-      - name: poetry-publish
-        run: |
-          poetry publish --build --username __token__ --password ${{ secrets.PYPI_TOKEN }}
