@@ -1,0 +1,3 @@
+[submodule "src/sidan_gin/python_signing_module"]
+	path = src/sidan_gin/python_signing_module
+	url = https://github.com/sidan-lab/python-signing-module.git
