@@ -5,7 +5,7 @@ on:
       - "v[0-9]+.[0-9]+.[0-9]+" # Push events to matching *, i.e. 1.0, 20.15.10
 
 jobs:
-  test:
+  publish:
     strategy:
       fail-fast: false
       matrix:
@@ -16,10 +16,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: "recursive" # This will fetch all submodules recursively
-      # - name: Install system dependencies
-      #   run: |
-      #     sudo apt-get update
-      #     sudo apt-get install -y swig
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y swig
       - name: Install poetry
         run: pipx install poetry
       - name: Set up Python ${{ matrix.python-version }}
@@ -35,7 +35,7 @@ jobs:
           poetry install
       - name: Lint with flake8
         run: |
-          poetry run flake8 src --ignore E501
+          poetry run flake8 src --ignore E501 --exclude src/sidan_gin/python_signing_module
       - name: Run unit tests
         run: |
           poetry run pytest --doctest-modules --ignore=examples --cov=sidan_gin --cov-config=.coveragerc --cov-report=xml
