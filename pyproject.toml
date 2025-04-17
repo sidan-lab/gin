@@ -23,7 +23,7 @@ cbor2 = "^5.6.5"
 pycardano = "^0.12.3"
 cryptography = "^44.0.2"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 pytest = "^8.2.0"
 pytest-xdist = "^3.5.0"
 pytest-cov = "^5.0.0"
