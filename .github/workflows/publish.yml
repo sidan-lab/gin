@@ -5,7 +5,7 @@ on:
       - "v[0-9]+.[0-9]+.[0-9]+" # Push events to matching *, i.e. 1.0, 20.15.10
 
 jobs:
-  publish:
+  test:
     strategy:
       fail-fast: false
       matrix:
@@ -19,8 +19,7 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y swig3.0  # Install SWIG for generating bindings
-          ln -s /usr/bin/swig3.0 /usr/bin/swig
+          sudo apt-get install -y swig
       - name: Install poetry
         run: pipx install poetry
       - name: Set up Python ${{ matrix.python-version }}
