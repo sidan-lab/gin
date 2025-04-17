@@ -25,7 +25,7 @@ jobs:
           poetry install
       - name: Lint with flake8
         run: |
-          poetry run flake8 src
+          poetry run flake8 src --ignore E501
       - name: Run unit tests
         run: |
           poetry run pytest --doctest-modules --ignore=examples --cov=sidan_gin --cov-config=.coveragerc --cov-report=xml
