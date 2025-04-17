@@ -27,3 +27,9 @@ format: ## runs code style and formatter
 deps:
 	poetry lock
 	poetry install
+
+init:
+	git submodule init
+	git submodule update
+	chmod +x ./src/sidan_gin/python_signing_module/build.sh
+	cd ./src/sidan_gin/python_signing_module && ./build.sh
