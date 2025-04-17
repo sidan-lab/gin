@@ -1,3 +1,3 @@
 # flake8: noqa
 
-from .wallet import *
+from .wallet import Wallet

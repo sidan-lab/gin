@@ -1,64 +1,11 @@
 from typing import Union
 
+from sidan_gin.wallet.cli import CliWallet
+from sidan_gin.wallet.mnemonic import MnemonicWallet
+from sidan_gin.wallet.root_key import RootKeyWallet
+
 from ..python_signing_module import CardanoSigner
 from .derivation_indices import DerivationIndices
-
-
-class MnemonicWallet:
-    def __init__(self, mnemonic_phrase: str):
-        self.mnemonic_phrase = mnemonic_phrase
-        self.derivation_indices = DerivationIndices.default()
-
-    def payment_account(self, account_index: int, key_index: int):
-        self.derivation_indices = DerivationIndices.payment(account_index, key_index)
-
-    def stake_account(self, account_index: int, key_index: int):
-        self.derivation_indices = DerivationIndices.stake(account_index, key_index)
-
-    def drep_account(self, account_index: int, key_index: int):
-        self.derivation_indices = DerivationIndices.drep(account_index, key_index)
-
-    def sign_tx(self, tx_hex: str) -> str:
-        return CardanoSigner.sign_mnemonic(
-            self.mnemonic_phrase,
-            self.derivation_indices,
-            tx_hex,
-        )
-
-
-class RootKeyWallet:
-    def __init__(self, root_key: str):
-        self.root_key = root_key
-        self.derivation_indices = DerivationIndices.default()
-
-    def payment_account(self, account_index: int, key_index: int):
-        self.derivation_indices = DerivationIndices.payment(account_index, key_index)
-
-    def stake_account(self, account_index: int, key_index: int):
-        self.derivation_indices = DerivationIndices.stake(account_index, key_index)
-
-    def drep_account(self, account_index: int, key_index: int):
-        self.derivation_indices = DerivationIndices.drep(account_index, key_index)
-
-    def sign_tx(self, tx_hex: str) -> str:
-        # Implement according to your CardanoSigner capabilities
-        return CardanoSigner.sign_root_key(
-            self.root_key,
-            self.derivation_indices,
-            tx_hex,
-        )
-
-
-class CliWallet:
-    def __init__(self, cli_skey: str):
-        self.cli_skey = cli_skey
-
-    def sign_tx(self, tx_hex: str) -> str:
-        # Implement CLI-based signing
-        return CardanoSigner.sign_cli_key(
-            self.cli_skey,
-            tx_hex,
-        )
 
 
 # Main Wallet class that users will interact with
