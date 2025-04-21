@@ -1,14 +1,14 @@
 # flake8: noqa: E501
 import unittest
 
-from sidan_gin import HDWallet
+from sidan_gin import Wallet
 
 
 class TestWalletSigning(unittest.TestCase):
 
     def setUp(self):
         self.mnemonic = "summer summer summer summer summer summer summer summer summer summer summer summer summer summer summer summer summer summer summer summer summer summer summer summer"
-        self.wallet = HDWallet(self.mnemonic)
+        self.wallet = Wallet.new_mnemonic(self.mnemonic)
 
     def test_sign_tx(self):
         tx_hex = "84a4008182582004509185eb98edd8e2420c1ceea914d6a7a3142041039b2f12b4d4f03162d56f04018282581d605867c3b8e27840f556ac268b781578b14c5661fc63ee720dbeab663f1a000f42408258390004845038ee499ee8bc0afe56f688f27b2dd76f230d3698a9afcc1b66e0464447c1f51adaefe1ebfb0dd485a349a70479ced1d198cbdf7fe71a15d35396021a0002917d075820bdaa99eb158414dea0a91d6c727e2268574b23efe6e08ab3b841abe8059a030ca0f5d90103a0"
