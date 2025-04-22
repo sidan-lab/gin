@@ -20,6 +20,9 @@ docs: ## build the documentation
 	poetry run sphinx-build docs/source docs/build/html
 	$(BROWSER) docs/build/html/index.html
 
+lint:
+	poetry run flake8 src --ignore E501 --exclude src/sidan_gin/python_signing_module
+
 format: ## runs code style and formatter
 	poetry run isort .
 	poetry run black .

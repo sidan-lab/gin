@@ -4,9 +4,6 @@ from sidan_gin.wallet.cli import CliWallet
 from sidan_gin.wallet.mnemonic import MnemonicWallet
 from sidan_gin.wallet.root_key import RootKeyWallet
 
-from ..python_signing_module import CardanoSigner
-from .derivation_indices import DerivationIndices
-
 
 # Main Wallet class that users will interact with
 class Wallet:
