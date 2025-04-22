@@ -1,13 +1,14 @@
 from typing import Union
 
-from sidan_gin.wallet.cli import CliWallet
+# from sidan_gin.wallet.cli import CliWallet
 from sidan_gin.wallet.mnemonic import MnemonicWallet
 from sidan_gin.wallet.root_key import RootKeyWallet
 
 
 # Main Wallet class that users will interact with
 class Wallet:
-    def __init__(self, wallet_type: Union[MnemonicWallet, RootKeyWallet, CliWallet]):
+    # def __init__(self, wallet_type: Union[MnemonicWallet, RootKeyWallet, CliWallet]):
+    def __init__(self, wallet_type: Union[MnemonicWallet, RootKeyWallet]):
         self.wallet_type = wallet_type
 
     @classmethod
@@ -20,10 +21,10 @@ class Wallet:
         """Create a new wallet from a root key"""
         return cls(RootKeyWallet(root_key))
 
-    @classmethod
-    def new_cli(cls, cli_skey: str) -> "Wallet":
-        """Create a new wallet that uses CLI signing"""
-        return cls(CliWallet(cli_skey))
+    # @classmethod
+    # def new_cli(cls, cli_skey: str) -> "Wallet":
+    #     """Create a new wallet that uses CLI signing"""
+    #     return cls(CliWallet(cli_skey))
 
     def payment_account(self, account_index: int, key_index: int) -> "Wallet":
         """Configure for payment account operations"""
