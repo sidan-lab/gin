@@ -7,7 +7,7 @@ class CliWallet:
 
     def sign_tx(self, tx_hex: str) -> str:
         # Implement CLI-based signing
-        return CardanoSigner.sign_cli_key(
+        return CardanoSigner.sign_cli(
             self.cli_skey,
             tx_hex,
         )

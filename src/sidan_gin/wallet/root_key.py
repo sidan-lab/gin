@@ -17,7 +17,7 @@ class RootKeyWallet:
         self.derivation_indices = DerivationIndices.drep(account_index, key_index)
 
     def sign_tx(self, tx_hex: str) -> str:
-        return CardanoSigner.sign_root_key(
+        return CardanoSigner.sign_bech32(
             self.root_key,
             self.derivation_indices,
             tx_hex,
