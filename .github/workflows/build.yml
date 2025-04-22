@@ -24,45 +24,63 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y swig
-      - name: Install OpenSSL 1.1
-        run: |
-          # Add older packages repository
-          sudo apt-get update
-          # This may need adjustment based on the ubuntu version
           sudo apt-get install -y software-properties-common
           sudo add-apt-repository 'deb http://security.ubuntu.com/ubuntu focal-security main'
           sudo apt-get update
-          # Install OpenSSL 1.1
           sudo apt-get install -y libssl1.1
+      - name: Debug OpenSSL setup
+        run: |
+          # Find where libssl1.1 is installed
+          find /usr -name "libssl.so*" | sort
+          find /usr -name "libcrypto.so*" | sort
+
+          # Check if libssl1.1 was actually installed
+          dpkg -l | grep libssl
+
+          # Check library path
+          echo $LD_LIBRARY_PATH
       - name: Install poetry
         run: pipx install poetry
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+      # - name: Build submodule
+      #   run: |
+      #     chmod +x ./src/sidan_gin/python_signing_module/build.sh
+      #     cd ./src/sidan_gin/python_signing_module && ./build.sh
       - name: Build submodule
         run: |
+          # Find OpenSSL 1.1 libraries
+          export OPENSSL_1_1_PATH=$(find /usr -path "*x86_64-linux-gnu*" -name "libssl.so.1.1" | head -n 1 | xargs dirname)
+          echo "OpenSSL 1.1 path: $OPENSSL_1_1_PATH"
+
+          # Set environment variables for the build
+          export LD_LIBRARY_PATH=$OPENSSL_1_1_PATH:$LD_LIBRARY_PATH
+          export CFLAGS="-I/usr/include/openssl"
+          export LDFLAGS="-L$OPENSSL_1_1_PATH -lssl -lcrypto"
+
+          # Build with these settings
           chmod +x ./src/sidan_gin/python_signing_module/build.sh
           cd ./src/sidan_gin/python_signing_module && ./build.sh
-      - name: Debug OpenSSL and module
-        run: |
-          # Print OpenSSL version and location
-          openssl version -a
-
-          # Show dynamic dependencies
-          ldd ./src/sidan_gin/python_signing_module/src/_CardanoSigner.cpython-311-x86_64-linux-gnu.so || echo "ldd failed"
-
-          # Check for missing symbols
-          nm -D ./src/sidan_gin/python_signing_module/src/_CardanoSigner.cpython-311-x86_64-linux-gnu.so | grep DSA_SIG || echo "No DSA_SIG symbols found"
-
-          # Check where OpenSSL is installed
-          ldconfig -p | grep ssl
       - name: Install dependencies
         run: |
           poetry install
       - name: Lint with flake8
         run: |
           poetry run flake8 src --ignore E501 --exclude src/sidan_gin/python_signing_module
+          - name: Set up test environment
+          run: |
+            # Find OpenSSL 1.1 libraries
+            export OPENSSL_1_1_PATH=$(find /usr -path "*x86_64-linux-gnu*" -name "libssl.so.1.1" | head -n 1 | xargs dirname)
+            echo "OpenSSL 1.1 path: $OPENSSL_1_1_PATH"
+            
+            # Create an .env file for Poetry to load
+            echo "LD_LIBRARY_PATH=$OPENSSL_1_1_PATH:$LD_LIBRARY_PATH" > .env
+      - name: Run unit tests
+        run: |
+          source .env
+          poetry run pytest --doctest-modules --ignore=examples --cov=sidan_gin --cov-config=.coveragerc --cov-report=xml
       - name: Run unit tests
         run: |
           poetry run pytest --doctest-modules --ignore=examples --cov=sidan_gin --cov-config=.coveragerc --cov-report=xml
