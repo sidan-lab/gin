@@ -1,7 +1,8 @@
 name: Github Releases To Discord
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+" # Push events to matching *, i.e. 1.0, 20.15.10
 
 jobs:
   github-releases-to-discord:
