@@ -26,6 +26,14 @@ jobs:
           sudo apt-get install -y swig
       - name: Install poetry
         run: pipx install poetry
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Build submodule
+        run: |
+          chmod +x ./src/sidan_gin/python_signing_module/build.sh
+          cd ./src/sidan_gin/python_signing_module && ./build.sh
       - name: Debug OpenSSL and module
         run: |
           # Print OpenSSL version and location
@@ -39,14 +47,6 @@ jobs:
 
           # Check where OpenSSL is installed
           ldconfig -p | grep ssl
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Build submodule
-        run: |
-          chmod +x ./src/sidan_gin/python_signing_module/build.sh
-          cd ./src/sidan_gin/python_signing_module && ./build.sh
       - name: Install dependencies
         run: |
           poetry install
