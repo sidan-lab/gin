@@ -26,6 +26,19 @@ jobs:
           sudo apt-get install -y swig
       - name: Install poetry
         run: pipx install poetry
+      - name: Debug OpenSSL and module
+        run: |
+          # Print OpenSSL version and location
+          openssl version -a
+
+          # Show dynamic dependencies
+          ldd ./src/sidan_gin/python_signing_module/src/_CardanoSigner.cpython-311-x86_64-linux-gnu.so || echo "ldd failed"
+
+          # Check for missing symbols
+          nm -D ./src/sidan_gin/python_signing_module/src/_CardanoSigner.cpython-311-x86_64-linux-gnu.so | grep DSA_SIG || echo "No DSA_SIG symbols found"
+
+          # Check where OpenSSL is installed
+          ldconfig -p | grep ssl
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
