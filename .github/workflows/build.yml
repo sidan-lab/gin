@@ -24,6 +24,16 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y swig
+      - name: Install OpenSSL 1.1
+        run: |
+          # Add older packages repository
+          sudo apt-get update
+          # This may need adjustment based on the ubuntu version
+          sudo apt-get install -y software-properties-common
+          sudo add-apt-repository 'deb http://security.ubuntu.com/ubuntu focal-security main'
+          sudo apt-get update
+          # Install OpenSSL 1.1
+          sudo apt-get install -y libssl1.1
       - name: Install poetry
         run: pipx install poetry
       - name: Set up Python ${{ matrix.python-version }}
