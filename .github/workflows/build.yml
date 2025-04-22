@@ -23,7 +23,8 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y swig libssl-dev
+          sudo apt-get install -y swig libssl1.1 libssl-dev
+          sudo ldconfig  # Update shared library cache
       - name: Install poetry
         run: pipx install poetry
       - name: Set up Python ${{ matrix.python-version }}
