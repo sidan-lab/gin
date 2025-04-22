@@ -30,6 +30,6 @@ deps:
 
 init:
 	git submodule init
-	git submodule update
+	git submodule update --force
 	chmod +x ./src/sidan_gin/python_signing_module/build.sh
 	cd ./src/sidan_gin/python_signing_module && ./build.sh
