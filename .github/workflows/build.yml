@@ -49,41 +49,57 @@ jobs:
       #   run: |
       #     chmod +x ./src/sidan_gin/python_signing_module/build.sh
       #     cd ./src/sidan_gin/python_signing_module && ./build.sh
-      - name: Build submodule
+      - name: Build submodule with OpenSSL 1.1
         run: |
-          # Find OpenSSL 1.1 libraries
-          export OPENSSL_1_1_PATH=$(find /usr -path "*x86_64-linux-gnu*" -name "libssl.so.1.1" | head -n 1 | xargs dirname)
-          echo "OpenSSL 1.1 path: $OPENSSL_1_1_PATH"
+          # Find the exact OpenSSL 1.1 library path
+          OPENSSL_1_1_PATH=/usr/lib/x86_64-linux-gnu
 
-          # Set environment variables for the build
+          # Set environment variables for compilation
           export LD_LIBRARY_PATH=$OPENSSL_1_1_PATH:$LD_LIBRARY_PATH
-          export CFLAGS="-I/usr/include/openssl"
           export LDFLAGS="-L$OPENSSL_1_1_PATH -lssl -lcrypto"
+          export CFLAGS="-I/usr/include/openssl"
 
-          # Build with these settings
+          # Ensure the build script is executable
           chmod +x ./src/sidan_gin/python_signing_module/build.sh
+
+          # Build the module
           cd ./src/sidan_gin/python_signing_module && ./build.sh
+
+          # Check if the built module exists
+          find . -name "_CardanoSigner*.so"
+
+          # Show the library dependencies
+          ldd ./src/_CardanoSigner.*.so || echo "ldd failed"
+      - name: Create runtime environment for OpenSSL 1.1
+        run: |
+          # Create .env file for setting LD_LIBRARY_PATH during tests
+          echo "export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:\$LD_LIBRARY_PATH" > openssl11.env
+          cat openssl11.env
       - name: Install dependencies
         run: |
+          source openssl11.env
           poetry install
       - name: Lint with flake8
         run: |
           poetry run flake8 src --ignore E501 --exclude src/sidan_gin/python_signing_module
-      - name: Set up test environment
-        run: |
-          # Find OpenSSL 1.1 libraries
-          export OPENSSL_1_1_PATH=$(find /usr -path "*x86_64-linux-gnu*" -name "libssl.so.1.1" | head -n 1 | xargs dirname)
-          echo "OpenSSL 1.1 path: $OPENSSL_1_1_PATH"
+      # - name: Set up test environment
+      #   run: |
+      #     # Find OpenSSL 1.1 libraries
+      #     export OPENSSL_1_1_PATH=$(find /usr -path "*x86_64-linux-gnu*" -name "libssl.so.1.1" | head -n 1 | xargs dirname)
+      #     echo "OpenSSL 1.1 path: $OPENSSL_1_1_PATH"
 
-          # Create an .env file for Poetry to load
-          echo "LD_LIBRARY_PATH=$OPENSSL_1_1_PATH:$LD_LIBRARY_PATH" > .env
+      #     # Create an .env file for Poetry to load
+      #     echo "LD_LIBRARY_PATH=$OPENSSL_1_1_PATH:$LD_LIBRARY_PATH" > .env
       - name: Run unit tests
         run: |
-          source .env
+          source openssl11.env
+          # Verify OpenSSL library being used
+          echo "OpenSSL runtime path:"
+          echo $LD_LIBRARY_PATH
           poetry run pytest --doctest-modules --ignore=examples --cov=sidan_gin --cov-config=.coveragerc --cov-report=xml
-      - name: Run unit tests
-        run: |
-          poetry run pytest --doctest-modules --ignore=examples --cov=sidan_gin --cov-config=.coveragerc --cov-report=xml
+      # - name: Run unit tests
+      #   run: |
+      #     poetry run pytest --doctest-modules --ignore=examples --cov=sidan_gin --cov-config=.coveragerc --cov-report=xml
       - name: poetry-check
         run: |
           poetry check
