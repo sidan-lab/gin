@@ -25,9 +25,9 @@ jobs:
       - name: Use specific branch for submodule
         run: |
           cd src/sidan_gin/python_signing_module
-          git fetch --all
+          git fetch --all --tags --force
           git branch -r
-          git checkout test/build
+          git checkout 41b723c
           cd ../../..
 
       - name: Set up Python ${{ matrix.python-version }}
