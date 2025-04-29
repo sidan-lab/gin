@@ -69,6 +69,35 @@ jobs:
             ./build.sh
           fi
 
+      - name: Install dependencies
+        run: |
+          source openssl11.env
+          poetry install
+      - name: Lint with flake8
+        run: |
+          poetry run flake8 src --ignore E501 --exclude src/sidan_gin/python_signing_module
+      # - name: Set up test environment
+      #   run: |
+      #     # Find OpenSSL 1.1 libraries
+      #     export OPENSSL_1_1_PATH=$(find /usr -path "*x86_64-linux-gnu*" -name "libssl.so.1.1" | head -n 1 | xargs dirname)
+      #     echo "OpenSSL 1.1 path: $OPENSSL_1_1_PATH"
+
+      #     # Create an .env file for Poetry to load
+      #     echo "LD_LIBRARY_PATH=$OPENSSL_1_1_PATH:$LD_LIBRARY_PATH" > .env
+      - name: Run unit tests
+        run: |
+          source openssl11.env
+          # Verify OpenSSL library being used
+          echo "OpenSSL runtime path:"
+          echo $LD_LIBRARY_PATH
+          poetry run pytest --doctest-modules --ignore=examples --cov=sidan_gin --cov-config=.coveragerc --cov-report=xml
+      # - name: Run unit tests
+      #   run: |
+      #     poetry run pytest --doctest-modules --ignore=examples --cov=sidan_gin --cov-config=.coveragerc --cov-report=xml
+      - name: poetry-check
+        run: |
+          poetry check
+
       - name: Install cibuildwheel
         run: |
           python -m pip install cibuildwheel
@@ -77,7 +106,7 @@ jobs:
         run: |
           python -m cibuildwheel --output-dir wheelhouse
         env:
-          CIBW_SKIP: "pp* cp27-* cp35-* cp36-* cp37-*"
+          CIBW_SKIP: "pp* cp27-* cp35-* cp36-* cp37-* cp38-* cp39-* cp310-*"
           # Pre-build commands if needed
           CIBW_BEFORE_BUILD: |
             python -m pip install -U setuptools wheel
