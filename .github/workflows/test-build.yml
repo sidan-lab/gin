@@ -106,7 +106,13 @@ jobs:
           CIBW_SKIP: "pp* cp27-* cp35-* cp36-* cp37-* cp38-* cp39-* cp310-*"
           # Pre-build commands if needed
           CIBW_BEFORE_BUILD: |
-            python -m pip install -U setuptools wheel
+            python -m pip install -U setuptools wheel setuptools-rust
+            if [ -d "src/sidan_gin/python_signing_module" ]; then
+              cd src/sidan_gin/python_signing_module
+              chmod +x build.sh
+              ./build.sh || true
+              cd ../../..
+            fi
 
       - uses: actions/upload-artifact@v4
         with:
