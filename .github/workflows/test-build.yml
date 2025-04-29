@@ -25,7 +25,8 @@ jobs:
       - name: Use specific branch for submodule
         run: |
           cd src/sidan_gin/python_signing_module
-          git fetch
+          git fetch --all
+          git branch -r
           git checkout test/build
           cd ../../..
 
