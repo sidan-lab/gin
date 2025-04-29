@@ -20,15 +20,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: recursive
+          submodules: false # Don't clone submodules yet
 
-      - name: Use specific branch for submodule
+      - name: Checkout submodule with specific branch
         run: |
-          cd src/sidan_gin/python_signing_module
-          git fetch --all --tags --force
-          git branch -r
-          git checkout 41b723c
-          cd ../../..
+          git submodule update --init --recursive --remote
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
