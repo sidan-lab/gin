@@ -71,7 +71,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-          source openssl11.env
           poetry install
       - name: Lint with flake8
         run: |
@@ -111,7 +110,7 @@ jobs:
           CIBW_BEFORE_BUILD: |
             python -m pip install -U setuptools wheel
 
-      # - name: Upload wheels
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     path: ./wheelhouse/*.whl
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
+          path: ./wheelhouse/*.whl
