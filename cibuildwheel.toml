@@ -1,0 +1,19 @@
+[tool.cibuildwheel]
+skip = ["pp*", "cp27-*", "cp35-*", "cp36-*", "cp37-*", "cp38-*", "cp39-*", "cp310-*"]
+build-frontend = "pip"
+
+[tool.cibuildwheel.linux]
+before-build = [
+    "yum install -y openssl-devel || apt-get update && apt-get install -y libssl-dev",
+    "cd {package}/src/sidan_gin/python_signing_module && chmod +x build.sh && ./build.sh"
+]
+
+[tool.cibuildwheel.macos]
+before-build = [
+    "cd {package}/src/sidan_gin/python_signing_module && chmod +x build.sh && ./build.sh"
+]
+
+[tool.cibuildwheel.windows]
+before-build = [
+    "cd {package}\\src\\sidan_gin\\python_signing_module && cargo build && copy target\\debug\\signer.lib src\\libsigner.a"
+]
