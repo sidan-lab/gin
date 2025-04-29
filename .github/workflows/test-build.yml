@@ -87,10 +87,6 @@ jobs:
       #     echo "LD_LIBRARY_PATH=$OPENSSL_1_1_PATH:$LD_LIBRARY_PATH" > .env
       - name: Run unit tests
         run: |
-          source openssl11.env
-          # Verify OpenSSL library being used
-          echo "OpenSSL runtime path:"
-          echo $LD_LIBRARY_PATH
           poetry run pytest --doctest-modules --ignore=examples --cov=sidan_gin --cov-config=.coveragerc --cov-report=xml
       # - name: Run unit tests
       #   run: |
