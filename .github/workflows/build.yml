@@ -1,9 +1,9 @@
 name: test
 
 on:
-  push:
-    branches:
-      - test/ci
+  # push:
+  #   branches:
+  #     - test/ci
   pull_request:
     branches:
       - main
