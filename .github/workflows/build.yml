@@ -3,7 +3,7 @@ name: test
 on:
   push:
     branches:
-      - main
+      - test/ci2
   pull_request:
     branches:
       - main
