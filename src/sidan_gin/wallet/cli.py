@@ -1,4 +1,4 @@
-from sidan_gin.python_signing_module.src import CardanoSigner
+import CardanoSigner
 
 
 class CliWallet:
