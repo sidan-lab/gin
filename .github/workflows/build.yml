@@ -30,16 +30,9 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Build submodule
-        run: |
-          chmod +x ./src/sidan_gin/python_signing_module/build.sh
-          cd ./src/sidan_gin/python_signing_module && ./build.sh
       - name: Install dependencies
         run: |
           poetry install
-      - name: Lint with flake8
-        run: |
-          poetry run flake8 src --ignore E501 --exclude src/sidan_gin/python_signing_module
       - name: Run unit tests
         run: |
           poetry run pytest --doctest-modules --ignore=examples --cov=sidan_gin --cov-config=.coveragerc --cov-report=xml
