@@ -20,6 +20,27 @@ class TestCipher(unittest.TestCase):
         decrypted_data = decrypt_with_cipher(encrypted_data_str, key)
         self.assertEqual(data, decrypted_data)
 
+    def test_decrypt_with_cipher_correct_password(self):
+        """Test that correct password should decrypt successfully"""
+        encrypted_data = '{"iv":"XRAGv22SYgpZiGhy","salt":"5YowN2Txol1ejcvt9gJB1A==","ciphertext":"SUJcKVu5/yLVXvcVRI0xLTT+HN0j0JQc2YGL4uwmdErIAa4ZwTkfaKP3VNlclBeXoRfRqCRw9ioYZLSrZOsUlSKRDIGkrfHamZw3Nt+bTwWgzAecWmLOeU8Ks1ou6iQa1K9Yqt2+zJi6rDJfkEFEZJBOjC0iFnmeIMemYVD5UexqIkTlGZcKzwW57WU4HPKHpri/PhupcPRVpbZaNurCTB9tfnDLsr83zgHqSFILOdnSwvUaMA=="}'
+        password = "testing123456"
+
+        result = decrypt_with_cipher(encrypted_data, password)
+
+        self.assertIsNotNone(result)
+        self.assertNotEqual(result, "")
+        print(f"Decrypted successfully, result length: {len(result)}")
+
+    def test_decrypt_with_cipher_incorrect_password(self):
+        """Test that incorrect password should fail"""
+        encrypted_data = '{"iv":"XRAGv22SYgpZiGhy","salt":"5YowN2Txol1ejcvt9gJB1A==","ciphertext":"SUJcKVu5/yLVXvcVRI0xLTT+HN0j0JQc2YGL4uwmdErIAa4ZwTkfaKP3VNlclBeXoRfRqCRw9ioYZLSrZOsUlSKRDIGkrfHamZw3Nt+bTwWgzAecWmLOeU8Ks1ou6iQa1K9Yqt2+zJi6rDJfkEFEZJBOjC0iFnmeIMemYVD5UexqIkTlGZcKzwW57WU4HPKHpri/PhupcPRVpbZaNurCTB9tfnDLsr83zgHqSFILOdnSwvUaMA=="}'
+        password = "wrongPassword"
+
+        with self.assertRaises(Exception) as context:
+            decrypt_with_cipher(encrypted_data, password)
+
+        print(f"Failed as expected with error: {context.exception}")
+
     def test_encrypt_and_decrypt_with_cipher(self):
         data = "solution solution solution solution solution solution solution solution solution solution solution solution solution solution solution solution solution solution solution solution solution solution solution solution"
         key = "01234567890123456789"

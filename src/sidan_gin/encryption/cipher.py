@@ -71,30 +71,42 @@ def encrypt_with_cipher(
 def decrypt_with_cipher(encrypted_data_json: str, key: str) -> str:
     """
     Decrypt data encrypted with AES-GCM using a derived key from PBKDF2 and SHA-256.
+    Supports both new format (with salt) and legacy format (without salt) for backward compatibility.
     """
     # Parse the encrypted data from JSON
     try:
         encrypted_data = json.loads(encrypted_data_json)
         iv_base64 = encrypted_data["iv"]
         ciphertext_base64 = encrypted_data["ciphertext"]
+        salt_base64 = encrypted_data.get("salt")  # Optional for backward compatibility
     except (KeyError, json.JSONDecodeError) as e:
         raise ValueError("Invalid encrypted data JSON") from e
 
-    # Decode the IV and ciphertext from base64
+    # Decode IV from base64
     try:
         iv = base64.b64decode(iv_base64)
+    except base64.binascii.Error as e:
+        raise ValueError("Failed to decode IV") from e
+
+    # Decode ciphertext from base64
+    try:
         ciphertext_with_tag = base64.b64decode(ciphertext_base64)
     except base64.binascii.Error as e:
-        raise ValueError("Base64 decoding failed") from e
+        raise ValueError("Failed to decode ciphertext") from e
 
-    # In Web Crypto API, the tag is appended to the ciphertext
-    # Standard GCM tag length is 16 bytes (128 bits)
-    tag_length = 16
-    ciphertext = ciphertext_with_tag[:-tag_length]
-    tag = ciphertext_with_tag[-tag_length:]
+    # Handle salt - support both new format (with salt) and legacy format (without salt)
+    if salt_base64 is not None and salt_base64 != "":
+        # New format: use the provided salt
+        try:
+            salt = base64.b64decode(salt_base64)
+        except base64.binascii.Error as e:
+            raise ValueError("Failed to decode salt") from e
+    else:
+        # Legacy format: use zero-filled salt of IV length for backward compatibility
+        salt = bytes(len(iv))
 
-    # Derive a cryptographic key from the input key using PBKDF2 and SHA-256
-    salt = bytes(len(iv))  # Use the same salt size as the IV
+    # Derive cryptographic key from password using PBKDF2
+    # Matches frontend: 100,000 iterations, SHA-256, 256-bit key
     kdf = PBKDF2HMAC(
         algorithm=SHA256(),
         length=32,  # AES-256 requires a 256-bit key (32 bytes)
@@ -103,6 +115,12 @@ def decrypt_with_cipher(encrypted_data_json: str, key: str) -> str:
         backend=default_backend(),
     )
     derived_key = kdf.derive(key.encode())
+
+    # In GCM mode, the tag is appended to the ciphertext
+    # Standard GCM tag length is 16 bytes (128 bits)
+    tag_length = 16
+    ciphertext = ciphertext_with_tag[:-tag_length]
+    tag = ciphertext_with_tag[-tag_length:]
 
     # Initialize AES-GCM cipher for decryption
     try:
@@ -116,7 +134,7 @@ def decrypt_with_cipher(encrypted_data_json: str, key: str) -> str:
         # Decrypt the data
         decrypted_data = decryptor.update(ciphertext) + decryptor.finalize()
     except Exception as e:
-        raise ValueError("Decryption failed") from e
+        raise ValueError("Failed to decrypt (incorrect password or corrupted data)") from e
 
     # Convert the decrypted data back to a string
     try:
