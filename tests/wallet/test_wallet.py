@@ -3,6 +3,7 @@ import unittest
 
 from sidan_gin import Wallet
 
+
 class TestWalletSigning(unittest.TestCase):
 
     def setUp(self):

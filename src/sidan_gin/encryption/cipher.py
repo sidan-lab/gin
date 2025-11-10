@@ -134,7 +134,9 @@ def decrypt_with_cipher(encrypted_data_json: str, key: str) -> str:
         # Decrypt the data
         decrypted_data = decryptor.update(ciphertext) + decryptor.finalize()
     except Exception as e:
-        raise ValueError("Failed to decrypt (incorrect password or corrupted data)") from e
+        raise ValueError(
+            "Failed to decrypt (incorrect password or corrupted data)"
+        ) from e
 
     # Convert the decrypted data back to a string
     try:
